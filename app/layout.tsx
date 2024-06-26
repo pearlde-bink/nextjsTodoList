@@ -25,6 +25,16 @@ interface State {
   todos: Todos[];
 }
 
+// export async function generateStaticParams() {
+//   const res = await fetch("http://localhost:4000/tickets");
+
+//   const tickets = await res.json();
+
+//   return tickets.map((ticket: any) => {
+//     id: ticket.id;
+//   });
+// }
+
 class RootLayout extends Component<{}, State> {
   state: State = {
     todos: [
@@ -33,19 +43,6 @@ class RootLayout extends Component<{}, State> {
       { id: 2, title: "Uống nước", status: "Kích Hoạt" },
       { id: 3, title: "Nghe nhạc", status: "Kích Hoạt" },
     ],
-  };
-
-  addTodo = (title: string, status: string) => {
-    const newTodo = {
-      id: this.state.todos.length + 1,
-      title,
-      status,
-    };
-
-    this.setState((prevState) => ({
-      todos: [...prevState.todos, newTodo],
-    }));
-    console.log("added");
   };
 
   removeTodo = (id: number) => {
@@ -67,6 +64,37 @@ class RootLayout extends Component<{}, State> {
         return todo;
       }),
     }));
+    console.log("change status");
+  };
+
+  addTodo = (title: string, status: string) => {
+    const newTodo = {
+      id: this.state.todos.length + 1,
+      title,
+      status,
+    };
+
+    this.setState((prevState) => ({
+      todos: [...prevState.todos, newTodo],
+    }));
+    console.log("added");
+  };
+
+  changeTodoTitle = (id: number, title: string) => {
+    const changedTitle = { title };
+    this.setState((prevState) => ({
+      todos: prevState.todos.map((todo) => {
+        if (todo.id === id) {
+          return {
+            ...todo,
+            title: changedTitle.title,
+            // title: "changed title",
+          };
+        }
+        return todo;
+      }),
+    }));
+    console.log("change title");
   };
 
   render() {
@@ -83,6 +111,7 @@ class RootLayout extends Component<{}, State> {
                 todos={this.state.todos}
                 removeTodo={this.removeTodo}
                 toggleToDoStatus={this.toggleToDoStatus}
+                changeTodoTitle={this.changeTodoTitle}
               ></ToDoListTable>
             </div>
           </div>

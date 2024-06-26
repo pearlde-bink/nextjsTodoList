@@ -5,6 +5,7 @@ import React, { Component } from "react";
 //   let todos = await fetch("http://localhost:8000/api/todo/list");
 //   return todos.json();
 // }
+
 interface Todo {
   id: number;
   title: string;
@@ -15,9 +16,15 @@ interface ToDoListTableProps {
   todos: Todo[];
   removeTodo: (id: number) => void;
   toggleToDoStatus: (id: number) => void;
+  changeTodoTitle: (id: number, title: string) => void;
 }
 
 class ToDoListTable extends Component<ToDoListTableProps> {
+  handleChangeTitle = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const newsTitle = e.target.value;
+    this.props.changeTodoTitle(id, newsTitle);
+  };
+
   render() {
     return (
       <div className="row mt-15">
@@ -47,17 +54,15 @@ class ToDoListTable extends Component<ToDoListTableProps> {
                 <td />
               </tr>
               {this.props.todos.map((todo, index) => (
-                // <ToDoListItem
-                //   key={item.id}
-                //   id={item.id + 1}
-                //   title={item.title}
-                //   status={item.status}
-                //   toggleTaskStatus={this.toggoleTaskStatus}
-                //   removeTodo={this.removeTodo}
-                // />
                 <tr key={todo.id}>
                   <td>{index + 1}</td>
-                  <td>{todo.title}</td>
+                  <td>
+                    <input
+                      type="text"
+                      value={todo.title}
+                      onChange={(e) => this.handleChangeTitle(todo.id, e)}
+                    />
+                  </td>
                   <td className="text-center">
                     <span
                       style={{
@@ -71,7 +76,13 @@ class ToDoListTable extends Component<ToDoListTableProps> {
                     </span>
                   </td>
                   <td className="text-center">
-                    <button type="button" className="btn btn-warning">
+                    <button
+                      type="button"
+                      className="btn btn-warning"
+                      onClick={() =>
+                        this.props.changeTodoTitle(todo.id, todo.title)
+                      }
+                    >
                       <span className="fa fa-pencil mr-5" />
                       Sửa
                     </button>
