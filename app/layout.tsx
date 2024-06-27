@@ -38,12 +38,22 @@ interface State {
 class RootLayout extends Component<{}, State> {
   state: State = {
     todos: [
-      { id: 0, title: "Học lập trình", status: "Kích Hoạt" },
-      { id: 1, title: "Đọc sách", status: "Ẩn" },
-      { id: 2, title: "Uống nước", status: "Kích Hoạt" },
-      { id: 3, title: "Nghe nhạc", status: "Kích Hoạt" },
+      // { id: 0, title: "Học lập trình", status: "Kích Hoạt" },
+      // { id: 1, title: "Đọc sách", status: "Ẩn" },
+      // { id: 2, title: "Uống nước", status: "Kích Hoạt" },
+      // { id: 3, title: "Nghe nhạc", status: "Kích Hoạt" },
     ],
   };
+
+  componentDidMount(): void {
+    fetch("http://localhost:8000/todd")
+      .then((res) => res.json())
+      .then((todo) => {
+        this.setState({
+          todos: todo,
+        });
+      });
+  }
 
   removeTodo = (id: number) => {
     this.setState((prevState) => ({

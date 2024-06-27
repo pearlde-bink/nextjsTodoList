@@ -1,5 +1,6 @@
 "use client";
 import React, { Component } from "react";
+import Script from "next/script";
 
 // const getTodos = async () => {
 //   let todos = await fetch("http://localhost:8000/api/todo/list");
@@ -77,6 +78,7 @@ class ToDoListTable extends Component<ToDoListTableProps> {
                   </td>
                   <td className="text-center">
                     <button
+                      id="toastbtn"
                       type="button"
                       className="btn btn-warning"
                       onClick={() =>
@@ -86,6 +88,30 @@ class ToDoListTable extends Component<ToDoListTableProps> {
                       <span className="fa fa-pencil mr-5" />
                       Sửa
                     </button>
+                    <div className="toast bg-success">
+                      <div className="toast-header">
+                        <strong className="me-auto">Success</strong>
+                        <button
+                          type="button"
+                          className="btn-close"
+                          data-bs-dismiss="toast"
+                        />
+                      </div>
+                      <div className="toast-body">
+                        <p>Successfully change to-do</p>
+                      </div>
+                    </div>
+                    <Script id="toast" type="module">
+                      {`
+                        document.getElementById("toastbtn").onclick = function() {
+                          var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+                          var toastList = toastElList.map(function(toastEl) {
+                            return new bootstrap.Toast(toastEl)
+                          })
+                          toastList.forEach(toast => toast.show())
+                        }
+                      `}
+                    </Script>
                     &nbsp;
                     <button
                       type="button"
