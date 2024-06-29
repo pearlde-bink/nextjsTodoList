@@ -2,11 +2,6 @@
 import React, { Component } from "react";
 import Script from "next/script";
 
-// const getTodos = async () => {
-//   let todos = await fetch("http://localhost:8000/api/todo/list");
-//   return todos.json();
-// }
-
 interface Todo {
   id: number;
   title: string;

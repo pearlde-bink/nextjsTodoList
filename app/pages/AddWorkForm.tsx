@@ -21,8 +21,19 @@ class AddWorkForm extends Component<AddWorkFormProps> {
 
   handleSubmit = (e: any) => {
     e.preventDefault();
-    this.props.addTodo(this.state.title, this.state.status);
-    this.setState({ title: "", status: "Kích Hoạt" });
+    const todo = {
+      title: this.state.title,
+      status: this.state.status,
+    };
+
+    fetch("http://localhost:8000/todo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(todo),
+    });
+    this.setState({ title: "", status: "Kích Hoạt" }); //setState also re-render component
   };
 
   render() {

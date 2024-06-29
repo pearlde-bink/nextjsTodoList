@@ -23,58 +23,68 @@ interface Todos {
 
 interface State {
   todos: Todos[];
+  todolistwithkw: Todos[];
+  keyword: string;
 }
-
-// export async function generateStaticParams() {
-//   const res = await fetch("http://localhost:4000/tickets");
-
-//   const tickets = await res.json();
-
-//   return tickets.map((ticket: any) => {
-//     id: ticket.id;
-//   });
-// }
 
 class RootLayout extends Component<{}, State> {
   state: State = {
-    todos: [
-      // { id: 0, title: "Học lập trình", status: "Kích Hoạt" },
-      // { id: 1, title: "Đọc sách", status: "Ẩn" },
-      // { id: 2, title: "Uống nước", status: "Kích Hoạt" },
-      // { id: 3, title: "Nghe nhạc", status: "Kích Hoạt" },
-    ],
+    todos: [],
+    todolistwithkw: [],
+    keyword: "",
   };
 
   componentDidMount(): void {
-    fetch("http://localhost:8000/todd")
-      .then((res) => res.json())
-      .then((todo) => {
-        this.setState({
-          todos: todo,
-        });
-      });
+    //to fetch data
+    this.fetchTodos();
   }
 
-  removeTodo = (id: number) => {
-    this.setState((prevState) => ({
-      todos: prevState.todos.filter((todo) => todo.id != id),
-    }));
-    console.log("deleted");
+  fetchTodos = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/todo");
+      const todos = await res.json();
+      this.setState({ todos, todolistwithkw: todos });
+    } catch (error) {
+      console.error("Failed to fetch todos:", error);
+    }
   };
 
-  toggleToDoStatus = (id: number) => {
-    this.setState((prevState) => ({
-      todos: prevState.todos.map((todo) => {
-        if (todo.id === id) {
-          return {
-            ...todo,
-            status: todo.status === "Kích Hoạt" ? "Ẩn" : "Kích Hoạt",
-          };
-        }
-        return todo;
-      }),
-    }));
-    console.log("change status");
+  removeTodo = async (id: number) => {
+    try {
+      await fetch(`http://localhost:8000/todo/${id}`, {
+        method: "DELETE",
+      });
+      this.setState((prevState) => ({
+        todos: prevState.todos.filter((todo) => todo.id !== id),
+      }));
+      console.log("Deleted todo");
+    } catch (error) {
+      console.error("Failed to delete todo:", error);
+    }
+  };
+
+  toggleToDoStatus = async (id: number) => {
+    const clickTodo = this.state.todos.find((todo) => todo.id === id);
+    if (!clickTodo) return "not found";
+    const newStatus = clickTodo.status === "Kích Hoạt" ? "Ẩn" : "Kích Hoạt";
+
+    try {
+      await fetch(`http://localhost:8000/todo/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...clickTodo, status: newStatus }),
+      });
+      this.setState((prevState) => ({
+        todos: prevState.todos.map((todo) =>
+          todo.id === id ? { ...todo, status: newStatus } : todo
+        ),
+      }));
+      console.log("Changed todo status");
+    } catch (error) {
+      console.error("Failed to change todo status:", error);
+    }
   };
 
   addTodo = (title: string, status: string) => {
@@ -86,27 +96,64 @@ class RootLayout extends Component<{}, State> {
 
     this.setState((prevState) => ({
       todos: [...prevState.todos, newTodo],
+      todolistwithkw: [...prevState.todos, newTodo],
     }));
     console.log("added");
   };
 
-  changeTodoTitle = (id: number, title: string) => {
-    const changedTitle = { title };
-    this.setState((prevState) => ({
-      todos: prevState.todos.map((todo) => {
-        if (todo.id === id) {
-          return {
-            ...todo,
-            title: changedTitle.title,
-            // title: "changed title",
-          };
-        }
-        return todo;
-      }),
-    }));
-    console.log("change title");
+  changeTodoTitle = async (id: number, title: string) => {
+    const todoToUpdate = this.state.todos.find((todo) => todo.id === id);
+    if (!todoToUpdate) return;
+
+    const updatedTodo = { ...todoToUpdate, title };
+
+    try {
+      await fetch(`http://localhost:8000/todo/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedTodo),
+      });
+      this.setState((prevState) => ({
+        todos: prevState.todos.map((todo) =>
+          todo.id === id ? updatedTodo : todo
+        ),
+      }));
+      console.log("Changed todo title");
+    } catch (error) {
+      console.error("Failed to change todo title:", error);
+    }
   };
 
+  findTodo = (keyword: string) => {
+    const todolistwithkw = this.state.todos.filter((todo) =>
+      todo.title.toLowerCase().includes(keyword.toLowerCase())
+    );
+    this.setState({ todolistwithkw, keyword });
+  };
+
+  sortTodoAZ = () => {
+    const sortedTodos = this.state.todolistwithkw.slice().sort((a, b) => {
+      if (a.title < b.title) return -1;
+      if (a.title > b.title) return 1;
+      return 0;
+    });
+    this.setState({ todolistwithkw: sortedTodos });
+  };
+
+  sortTodoZA = () => {
+    const sortedTodos = this.state.todolistwithkw.slice().sort((a, b) => {
+      if (a.title < b.title) return 1;
+      if (a.title > b.title) return -1;
+      return 0;
+    });
+    this.setState({ todolistwithkw: sortedTodos });
+  };
+
+  handleSeeAll = () => {
+    this.setState({ todolistwithkw: this.state.todos });
+  };
   render() {
     return (
       <html lang="en">
@@ -115,10 +162,15 @@ class RootLayout extends Component<{}, State> {
           <div className="row">
             <AddWorkForm addTodo={this.addTodo} />
             <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
-              <ToDoListButton></ToDoListButton>
+              <ToDoListButton
+                findTodo={this.findTodo}
+                sortTodoAZ={this.sortTodoAZ}
+                sortTodoZA={this.sortTodoZA}
+                handleSeeAll={this.handleSeeAll}
+              ></ToDoListButton>
 
               <ToDoListTable
-                todos={this.state.todos}
+                todos={this.state.todolistwithkw}
                 removeTodo={this.removeTodo}
                 toggleToDoStatus={this.toggleToDoStatus}
                 changeTodoTitle={this.changeTodoTitle}
