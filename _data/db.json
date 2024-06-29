@@ -3,12 +3,12 @@
     {
       "id": "0",
       "title": "Học lập trình",
-      "status": "Ẩn"
+      "status": "Kích Hoạt"
     },
     {
       "id": "1",
       "title": "Đọc sách",
-      "status": "Ẩn"
+      "status": "Kích Hoạt"
     },
     {
       "id": "2",
@@ -18,16 +18,11 @@
     {
       "id": "3",
       "title": "Nghe nhạc",
-      "status": "Kích Hoạt"
-    },
-    {
-      "id": "5",
-      "title": "Nghe nước",
       "status": "Ẩn"
     },
     {
-      "id": "ad06",
-      "title": "no non no",
+      "id": "5758",
+      "title": "thuyen ",
       "status": "Kích Hoạt"
     }
   ]

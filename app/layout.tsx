@@ -49,20 +49,6 @@ class RootLayout extends Component<{}, State> {
     }
   };
 
-  removeTodo = async (id: number) => {
-    try {
-      await fetch(`http://localhost:8000/todo/${id}`, {
-        method: "DELETE",
-      });
-      this.setState((prevState) => ({
-        todos: prevState.todos.filter((todo) => todo.id !== id),
-      }));
-      console.log("Deleted todo");
-    } catch (error) {
-      console.error("Failed to delete todo:", error);
-    }
-  };
-
   toggleToDoStatus = async (id: number) => {
     const clickTodo = this.state.todos.find((todo) => todo.id === id);
     if (!clickTodo) return "not found";
@@ -76,10 +62,17 @@ class RootLayout extends Component<{}, State> {
         },
         body: JSON.stringify({ ...clickTodo, status: newStatus }),
       });
-      this.setState((prevState) => ({
-        todos: prevState.todos.map((todo) =>
-          todo.id === id ? { ...todo, status: newStatus } : todo
-        ),
+      const newtodos = this.state.todos.map((todo) => {
+        if (todo.id === id) {
+          if (todo.status === "Kích Hoạt") todo.status = "Ẩn";
+          else if (todo.status === "Ẩn") todo.status = "Kích Hoạt";
+          return todo;
+        }
+        return todo;
+      });
+      this.setState(() => ({
+        todos: newtodos,
+        todolistwithkw: newtodos,
       }));
       console.log("Changed todo status");
     } catch (error) {
@@ -87,18 +80,39 @@ class RootLayout extends Component<{}, State> {
     }
   };
 
-  addTodo = (title: string, status: string) => {
-    const newTodo = {
-      id: this.state.todos.length + 1,
-      title,
-      status,
-    };
+  removeTodo = async (id: number) => {
+    try {
+      await fetch(`http://localhost:8000/todo/${id}`, {
+        method: "DELETE",
+      });
+      const newtodos = this.state.todos.filter((todo) => todo.id !== id);
+      this.setState(() => ({
+        todos: newtodos,
+        todolistwithkw: newtodos,
+      }));
+      console.log("Deleted todo");
+    } catch (error) {
+      console.error("Failed to delete todo:", error);
+    }
+  };
 
-    this.setState((prevState) => ({
-      todos: [...prevState.todos, newTodo],
-      todolistwithkw: [...prevState.todos, newTodo],
-    }));
-    console.log("added");
+  addTodo = (title: string, status: string) => {
+    try {
+      const newTodo: Todos = {
+        id: this.state.todos.length + 1,
+        title,
+        status,
+      };
+
+      const newtodos = [...this.state.todos, newTodo];
+      this.setState({
+        todos: newtodos,
+        todolistwithkw: newtodos,
+      });
+      console.log("added");
+    } catch (error) {
+      console.error("Failed to add todo:", error);
+    }
   };
 
   changeTodoTitle = async (id: number, title: string) => {
@@ -115,11 +129,17 @@ class RootLayout extends Component<{}, State> {
         },
         body: JSON.stringify(updatedTodo),
       });
-      this.setState((prevState) => ({
-        todos: prevState.todos.map((todo) =>
-          todo.id === id ? updatedTodo : todo
+
+      const newtodos = this.state.todos.map((todo) =>
+        todo.id === id ? updatedTodo : todo
+      );
+
+      this.setState({
+        todos: newtodos,
+        todolistwithkw: newtodos.filter((todo) =>
+          todo.title.toLowerCase().includes(this.state.keyword.toLowerCase())
         ),
-      }));
+      });
       console.log("Changed todo title");
     } catch (error) {
       console.error("Failed to change todo title:", error);
@@ -154,6 +174,7 @@ class RootLayout extends Component<{}, State> {
   handleSeeAll = () => {
     this.setState({ todolistwithkw: this.state.todos });
   };
+
   render() {
     return (
       <html lang="en">
@@ -171,6 +192,7 @@ class RootLayout extends Component<{}, State> {
 
               <ToDoListTable
                 todos={this.state.todolistwithkw}
+                todolistwithkw={this.state.todolistwithkw}
                 removeTodo={this.removeTodo}
                 toggleToDoStatus={this.toggleToDoStatus}
                 changeTodoTitle={this.changeTodoTitle}

@@ -10,6 +10,7 @@ interface Todo {
 
 interface ToDoListTableProps {
   todos: Todo[];
+  todolistwithkw: Todo[];
   removeTodo: (id: number) => void;
   toggleToDoStatus: (id: number) => void;
   changeTodoTitle: (id: number, title: string) => void;
