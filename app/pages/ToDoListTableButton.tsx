@@ -1,11 +1,14 @@
 "use client";
 import React, { Component } from "react";
+import Script from "next/script";
 
 interface ToDoListTableButtonProps {
   findTodo: (keyword: string) => void;
   sortTodoAZ: () => void;
   sortTodoZA: () => void;
   handleSeeAll: () => void;
+  sortActivate: () => void;
+  sortDeactivate: () => void;
 }
 
 interface State {
@@ -32,6 +35,12 @@ class ToDoListButton extends Component<ToDoListTableButtonProps, State> {
   };
   handleSeeAll = () => {
     this.props.handleSeeAll();
+  };
+  handleSortActivate = () => {
+    this.props.sortActivate();
+  };
+  handleSortDeactivate = () => {
+    this.props.sortDeactivate();
   };
 
   render() {
@@ -75,7 +84,7 @@ class ToDoListButton extends Component<ToDoListTableButtonProps, State> {
           <div className="col-xs-6 col-sm-6 col-md-6 col-lg-6">
             <div className="dropdown">
               <button
-                className="btn btn-primary dropdown-toggle"
+                className="btn-toggle btn btn-primary dropdown-toggle"
                 type="button"
                 id="dropdownMenu1"
                 data-toggle="dropdown"
@@ -97,18 +106,44 @@ class ToDoListButton extends Component<ToDoListTableButtonProps, State> {
                 </li>
                 <li role="separator" className="divider" />
                 <li>
-                  <button className="dropdown-item">
+                  <button
+                    className="dropdown-item"
+                    onClick={this.handleSortActivate}
+                  >
                     Trạng Thái Kích Hoạt
                   </button>
                 </li>
                 <li>
-                  <button className="dropdown-item">Trạng Thái Ẩn</button>
+                  <button
+                    className="dropdown-item"
+                    onClick={this.handleSortDeactivate}
+                  >
+                    Trạng Thái Ẩn
+                  </button>
                 </li>
               </ul>
             </div>
           </div>
         </div>
-        <div></div>
+        <Script id="scriptBtnToggle">{`
+          const button = document.querySelector(".btn-toggle");
+          const menu = document.querySelector(".dropdown-menu");
+          menu.style.display = "none";
+          console.log("display: none");
+
+          function btntgl(){
+            if(menu.style.display === "none"){
+              menu.style.display = "block";
+              console.log("displayed");
+            } else {
+              menu.style.display = "none"; 
+              console.log("no-display");
+            }
+            console.log("none");
+          }
+          
+          button.addEventListener("click", btntgl);
+        `}</Script>
       </div>
     );
   }

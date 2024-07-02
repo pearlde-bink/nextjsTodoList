@@ -154,21 +154,32 @@ class RootLayout extends Component<{}, State> {
   };
 
   sortTodoAZ = () => {
-    const sortedTodos = this.state.todolistwithkw.slice().sort((a, b) => {
-      if (a.title < b.title) return -1;
-      if (a.title > b.title) return 1;
-      return 0;
-    });
+    const sortedTodos = this.state.todolistwithkw
+      .slice()
+      .sort((a, b) => a.title.localeCompare(b.title));
     this.setState({ todolistwithkw: sortedTodos });
   };
 
   sortTodoZA = () => {
-    const sortedTodos = this.state.todolistwithkw.slice().sort((a, b) => {
-      if (a.title < b.title) return 1;
-      if (a.title > b.title) return -1;
-      return 0;
-    });
+    const sortedTodos = this.state.todolistwithkw
+      .slice()
+      .sort((b, a) => a.title.localeCompare(b.title));
     this.setState({ todolistwithkw: sortedTodos });
+  };
+
+  sortActivate = () => {
+    const todolistwithkw = this.state.todos.filter(
+      (todo) => todo.status === "Kích Hoạt"
+    );
+    this.setState({ todolistwithkw });
+  };
+
+  sortDeactivate = () => {
+    // this.setState({ todolistwithkw: this.state.todos });
+    const todolistwithkw = this.state.todos.filter(
+      (todo) => todo.status === "Ẩn"
+    );
+    this.setState({ todolistwithkw });
   };
 
   handleSeeAll = () => {
@@ -188,6 +199,8 @@ class RootLayout extends Component<{}, State> {
                 sortTodoAZ={this.sortTodoAZ}
                 sortTodoZA={this.sortTodoZA}
                 handleSeeAll={this.handleSeeAll}
+                sortActivate={this.sortActivate}
+                sortDeactivate={this.sortDeactivate}
               ></ToDoListButton>
 
               <ToDoListTable
