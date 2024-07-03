@@ -7,4 +7,4 @@ export default function Home() {
 // khi bấm sửa, addformwork hiện lên, cùng thông tin như title và status
 // => sửa hoặc thêm xong thì đóng lại, cập nhật ngay trên bảng
 
-// tìm todo, trên form thì là cả db, còn trong table thì là local
+// tìm todo, trên form thì là cả db, còn trong table thì là local => oke

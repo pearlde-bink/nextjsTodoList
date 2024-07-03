@@ -86,10 +86,13 @@ class RootLayout extends Component<{}, State> {
         }
         return todo;
       });
-      this.setState(() => ({
-        todos: newtodos,
-        todolistwithkw: newtodos,
-      }));
+      this.setState(
+        {
+          todos: newtodos,
+          todolistwithkw: newtodos,
+        },
+        this.updateCurrentTodos
+      );
       console.log("Changed todo status");
     } catch (error) {
       console.error("Failed to change todo status:", error);
@@ -102,10 +105,13 @@ class RootLayout extends Component<{}, State> {
         method: "DELETE",
       });
       const newtodos = this.state.todos.filter((todo) => todo.id !== id);
-      this.setState(() => ({
-        todos: newtodos,
-        todolistwithkw: newtodos,
-      }));
+      this.setState(
+        {
+          todos: newtodos,
+          todolistwithkw: newtodos,
+        },
+        this.updateCurrentTodos
+      );
       console.log("Deleted todo");
     } catch (error) {
       console.error("Failed to delete todo:", error);
@@ -115,17 +121,19 @@ class RootLayout extends Component<{}, State> {
   addTodo = (title: string, status: string) => {
     try {
       const newTodo: Todos = {
-        id: this.state.todos.length + 1,
+        id: (this.state.todos.length + 1) as number,
         title,
         status,
       };
 
       const newtodos = [...this.state.todos, newTodo];
-      this.setState({
-        todos: newtodos,
-        todolistwithkw: newtodos,
-      });
-      console.log("added");
+      this.setState(
+        {
+          todos: newtodos,
+          todolistwithkw: newtodos,
+        },
+        this.updateCurrentTodos
+      );
     } catch (error) {
       console.error("Failed to add todo:", error);
     }
@@ -150,12 +158,15 @@ class RootLayout extends Component<{}, State> {
         todo.id === id ? updatedTodo : todo
       );
 
-      this.setState({
-        todos: newtodos,
-        todolistwithkw: newtodos.filter((todo) =>
-          todo.title.toLowerCase().includes(this.state.keyword.toLowerCase())
-        ),
-      });
+      this.setState(
+        {
+          todos: newtodos,
+          todolistwithkw: newtodos.filter((todo) =>
+            todo.title.toLowerCase().includes(this.state.keyword.toLowerCase())
+          ),
+        },
+        this.updateCurrentTodos
+      );
       console.log("Changed todo title");
     } catch (error) {
       console.error("Failed to change todo title:", error);
@@ -227,6 +238,7 @@ class RootLayout extends Component<{}, State> {
   };
 
   hadlePageChange = (pageNum: number) => {
+    //change todo list when click pagination
     this.setCurrentPage(pageNum);
   };
 
