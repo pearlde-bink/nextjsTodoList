@@ -1,3 +1,4 @@
+/* eslint-disable react/no-deprecated */
 "use client";
 import React, { Component } from "react";
 // import type { Metadata } from "next";
@@ -5,6 +6,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import AddWorkForm from "./pages/AddWorkForm";
 import Header from "./components/Header";
+import Pagination from "./components/PaginationControls";
 import ToDoListButton from "./pages/ToDoListTableButton";
 import ToDoListTable from "./pages/ToDoListTable";
 
@@ -25,6 +27,11 @@ interface State {
   todos: Todos[];
   todolistwithkw: Todos[];
   keyword: string;
+  currentPage: number;
+  todoPerPage: number;
+  indexOfLastTodo: number;
+  indexOfFirstTodo: number;
+  currentTodos: Todos[];
 }
 
 class RootLayout extends Component<{}, State> {
@@ -32,6 +39,15 @@ class RootLayout extends Component<{}, State> {
     todos: [],
     todolistwithkw: [],
     keyword: "",
+    currentPage: 1,
+    todoPerPage: 5,
+    indexOfLastTodo: 4,
+    indexOfFirstTodo: 0,
+    currentTodos: [],
+  };
+
+  setCurrentPage = (pageNum: number) => {
+    this.setState({ currentPage: pageNum }, this.updateCurrentTodos);
   };
 
   componentDidMount(): void {
@@ -43,7 +59,7 @@ class RootLayout extends Component<{}, State> {
     try {
       const res = await fetch("http://localhost:8000/todo");
       const todos = await res.json();
-      this.setState({ todos, todolistwithkw: todos });
+      this.setState({ todos }, this.updateCurrentTodos);
     } catch (error) {
       console.error("Failed to fetch todos:", error);
     }
@@ -183,7 +199,35 @@ class RootLayout extends Component<{}, State> {
   };
 
   handleSeeAll = () => {
-    this.setState({ todolistwithkw: this.state.todos });
+    this.setState({
+      todos: this.state.todos,
+      todolistwithkw: this.state.todos,
+    });
+  };
+
+  findTodoInPage = (keyword: string) => {
+    const { currentTodos } = this.state;
+    const filteredTodos = currentTodos.filter((todo) =>
+      todo.title.toLowerCase().includes(keyword.toLowerCase())
+    );
+    this.setState({ todolistwithkw: filteredTodos, keyword });
+  };
+
+  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const keyword = event.target.value;
+    this.setState({ keyword }, () => this.findTodoInPage(keyword));
+  };
+
+  updateCurrentTodos = () => {
+    const { todos, currentPage, todoPerPage, keyword } = this.state;
+    const indexOfLastTodo = currentPage * todoPerPage;
+    const indexOfFirstTodo = indexOfLastTodo - todoPerPage;
+    const currentTodos = todos.slice(indexOfFirstTodo, indexOfLastTodo);
+    this.setState({ currentTodos }, () => this.findTodoInPage(keyword));
+  };
+
+  hadlePageChange = (pageNum: number) => {
+    this.setCurrentPage(pageNum);
   };
 
   render() {
@@ -209,9 +253,17 @@ class RootLayout extends Component<{}, State> {
                 removeTodo={this.removeTodo}
                 toggleToDoStatus={this.toggleToDoStatus}
                 changeTodoTitle={this.changeTodoTitle}
+                // findTodoInPage={this.findTodoInPage}
+                handleInputChange={this.handleInputChange}
               ></ToDoListTable>
             </div>
           </div>
+          <Pagination
+            todoPerPage={this.state.todoPerPage}
+            length={this.state.todos.length}
+            setCurrentPage={this.setCurrentPage}
+            handlePageChange={this.hadlePageChange}
+          />
         </body>
       </html>
     );

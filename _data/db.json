@@ -16,14 +16,209 @@
       "status": "Ẩn"
     },
     {
-      "id": "3",
-      "title": "Nghe nhạc",
+      "id": "5",
+      "title": "Đi dạo",
       "status": "Ẩn"
     },
     {
-      "id": "5758",
-      "title": "thuyen ",
+      "id": "6",
+      "title": "Chơi game",
+      "status": "Ẩn"
+    },
+    {
+      "id": "7",
+      "title": "Ngủ trưa",
+      "status": "Ẩn"
+    },
+    {
+      "id": "8",
+      "title": "Nấu ăn",
       "status": "Kích Hoạt"
+    },
+    {
+      "id": "9",
+      "title": "Dọn nhà",
+      "status": "Ẩn"
+    },
+    {
+      "id": "10",
+      "title": "Đi tập gym",
+      "status": "Kích Hoạt"
+    },
+    {
+      "id": "11",
+      "title": "Học tiếng Anh",
+      "status": "Ẩn"
+    },
+    {
+      "id": "12",
+      "title": "Viết blog",
+      "status": "Ẩn"
+    },
+    {
+      "id": "13",
+      "title": "Đi du lịch",
+      "status": "Ẩn"
+    },
+    {
+      "id": "14",
+      "title": "Xem phim",
+      "status": "Kích Hoạt"
+    },
+    {
+      "id": "15",
+      "title": "Làm vườn",
+      "status": "Ẩn"
+    },
+    {
+      "id": "16",
+      "title": "Mua sắm",
+      "status": "Kích Hoạt"
+    },
+    {
+      "id": "17",
+      "title": "Gặp bạn bè",
+      "status": "Ẩn"
+    },
+    {
+      "id": "18",
+      "title": "Chơi thể thao",
+      "status": "Ẩn"
+    },
+    {
+      "id": "19",
+      "title": "Luyện tập yoga",
+      "status": "Ẩn"
+    },
+    {
+      "id": "20",
+      "title": "Làm bánh",
+      "status": "Kích Hoạt"
+    },
+    {
+      "id": "21",
+      "title": "Tưới cây",
+      "status": "Ẩn"
+    },
+    {
+      "id": "22",
+      "title": "Học lập trình 3",
+      "status": "Kích Hoạt"
+    },
+    {
+      "id": "23",
+      "title": "Đi bộ",
+      "status": "Ẩn"
+    },
+    {
+      "id": "24",
+      "title": "Nghe podcast",
+      "status": "Ẩn"
+    },
+    {
+      "id": "25",
+      "title": "Vẽ tranh",
+      "status": "Ẩn"
+    },
+    {
+      "id": "26",
+      "title": "Làm đồ thủ công",
+      "status": "Kích Hoạt"
+    },
+    {
+      "id": "27",
+      "title": "Dạy học",
+      "status": "Ẩn"
+    },
+    {
+      "id": "28",
+      "title": "Học nấu ăn",
+      "status": "Kích Hoạt"
+    },
+    {
+      "id": "29",
+      "title": "Thực hiện dự án",
+      "status": "Ẩn"
+    },
+    {
+      "id": "30",
+      "title": "Chơi piano",
+      "status": "Ẩn"
+    },
+    {
+      "id": "31",
+      "title": "Đi xem ca nhạc",
+      "status": "Ẩn"
+    },
+    {
+      "id": "32",
+      "title": "Tập đàn guitar",
+      "status": "Kích Hoạt"
+    },
+    {
+      "id": "33",
+      "title": "Viết nhật ký",
+      "status": "Ẩn"
+    },
+    {
+      "id": "34",
+      "title": "Luyện nghe tiếng Anh",
+      "status": "Kích Hoạt"
+    },
+    {
+      "id": "35",
+      "title": "Chơi bóng rổ",
+      "status": "Ẩn"
+    },
+    {
+      "id": "36",
+      "title": "Học lập trình 4",
+      "status": "Ẩn"
+    },
+    {
+      "id": "37",
+      "title": "Tập võ",
+      "status": "Ẩn"
+    },
+    {
+      "id": "38",
+      "title": "Học vẽ",
+      "status": "Kích Hoạt"
+    },
+    {
+      "id": "39",
+      "title": "Làm việc",
+      "status": "Ẩn"
+    },
+    {
+      "id": "40",
+      "title": "Đi học",
+      "status": "Kích Hoạt"
+    },
+    {
+      "id": "41",
+      "title": "Tập thể dục",
+      "status": "Ẩn"
+    },
+    {
+      "id": "42",
+      "title": "Lập kế hoạch",
+      "status": "Ẩn"
+    },
+    {
+      "id": "43",
+      "title": "Chơi cờ vua",
+      "status": "Ẩn"
+    },
+    {
+      "id": "44",
+      "title": "Làm việc nhóm",
+      "status": "Kích Hoạt"
+    },
+    {
+      "id": "45",
+      "title": "Thư giãn",
+      "status": "Ẩn"
     }
   ]
 }

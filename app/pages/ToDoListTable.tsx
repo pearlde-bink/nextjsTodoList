@@ -14,6 +14,8 @@ interface ToDoListTableProps {
   removeTodo: (id: number) => void;
   toggleToDoStatus: (id: number) => void;
   changeTodoTitle: (id: number, title: string) => void;
+  // findTodoInPage: (keyword: string) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 class ToDoListTable extends Component<ToDoListTableProps> {
@@ -39,7 +41,11 @@ class ToDoListTable extends Component<ToDoListTableProps> {
               <tr>
                 <td />
                 <td>
-                  <input type="text" className="form-control" />
+                  <input
+                    type="text"
+                    className="form-control"
+                    onChange={this.props.handleInputChange}
+                  />
                 </td>
                 <td>
                   <select className="form-control">
@@ -52,13 +58,9 @@ class ToDoListTable extends Component<ToDoListTableProps> {
               </tr>
               {this.props.todos.map((todo, index) => (
                 <tr key={todo.id}>
-                  <td>{index + 1}</td>
+                  <td>{todo.id}</td>
                   <td>
-                    <input
-                      type="text"
-                      value={todo.title}
-                      onChange={(e) => this.handleChangeTitle(todo.id, e)}
-                    />
+                    <p>{todo.title}</p>
                   </td>
                   <td className="text-center">
                     <span
@@ -84,7 +86,7 @@ class ToDoListTable extends Component<ToDoListTableProps> {
                       <span className="fa fa-pencil mr-5" />
                       Sửa
                     </button>
-                    <div className="toast bg-success">
+                    {/* <div className="toast bg-success">
                       <div className="toast-header">
                         <strong className="me-auto">Success</strong>
                         <button
@@ -107,7 +109,7 @@ class ToDoListTable extends Component<ToDoListTableProps> {
                           toastList.forEach(toast => toast.show())
                         }
                       `}
-                    </Script>
+                    </Script> */}
                     &nbsp;
                     <button
                       type="button"
