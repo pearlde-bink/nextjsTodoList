@@ -1,7 +1,6 @@
-/* eslint-disable react/no-deprecated */
 "use client";
-import React, { Component } from "react";
 // import type { Metadata } from "next";
+import React, { Component } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import AddWorkForm from "./pages/AddWorkForm";
@@ -32,6 +31,7 @@ interface State {
   indexOfLastTodo: number;
   indexOfFirstTodo: number;
   currentTodos: Todos[];
+  isAddFormVisible: boolean;
 }
 
 class RootLayout extends Component<{}, State> {
@@ -44,6 +44,7 @@ class RootLayout extends Component<{}, State> {
     indexOfLastTodo: 4,
     indexOfFirstTodo: 0,
     currentTodos: [],
+    isAddFormVisible: false,
   };
 
   setCurrentPage = (pageNum: number) => {
@@ -99,12 +100,14 @@ class RootLayout extends Component<{}, State> {
     }
   };
 
-  removeTodo = async (id: number) => {
+  removeTodo = async (id: string) => {
     try {
       await fetch(`http://localhost:8000/todo/${id}`, {
         method: "DELETE",
       });
-      const newtodos = this.state.todos.filter((todo) => todo.id !== id);
+      const newtodos = this.state.todos.filter(
+        (todo) => (todo.id as unknown as string) !== id
+      );
       this.setState(
         {
           todos: newtodos,
@@ -121,7 +124,7 @@ class RootLayout extends Component<{}, State> {
   addTodo = (title: string, status: string) => {
     try {
       const newTodo: Todos = {
-        id: (this.state.todos.length + 1) as number,
+        id: this.state.todos.length + 1,
         title,
         status,
       };
@@ -131,12 +134,21 @@ class RootLayout extends Component<{}, State> {
         {
           todos: newtodos,
           todolistwithkw: newtodos,
+          isAddFormVisible: false,
         },
         this.updateCurrentTodos
       );
+      // return newTodo;
     } catch (error) {
       console.error("Failed to add todo:", error);
     }
+  };
+
+  toggleAddFormVisible = () => {
+    console.log("toggle");
+    this.setState((prevState) => ({
+      isAddFormVisible: !prevState.isAddFormVisible,
+    }));
   };
 
   changeTodoTitle = async (id: number, title: string) => {
@@ -195,18 +207,23 @@ class RootLayout extends Component<{}, State> {
   };
 
   sortActivate = () => {
-    const todolistwithkw = this.state.todos.filter(
+    const sortActivateList = this.state.currentTodos.filter(
       (todo) => todo.status === "Kích Hoạt"
     );
-    this.setState({ todolistwithkw });
+
+    this.setState({ todolistwithkw: sortActivateList });
   };
 
   sortDeactivate = () => {
-    // this.setState({ todolistwithkw: this.state.todos });
-    const todolistwithkw = this.state.todos.filter(
+    const sortDeactivateList = this.state.currentTodos.filter(
       (todo) => todo.status === "Ẩn"
     );
-    this.setState({ todolistwithkw });
+
+    this.setState({ todolistwithkw: sortDeactivateList });
+  };
+
+  seeAllCurrent = () => {
+    this.setState({ todolistwithkw: this.state.currentTodos });
   };
 
   handleSeeAll = () => {
@@ -248,7 +265,10 @@ class RootLayout extends Component<{}, State> {
         <body className={inter.className}>
           <Header />
           <div className="row">
-            <AddWorkForm addTodo={this.addTodo} />
+            {/* <AddWorkForm addTodo={this.addTodo} /> */}
+            {this.state.isAddFormVisible && (
+              <AddWorkForm addTodo={this.addTodo} />
+            )}
             <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
               <ToDoListButton
                 findTodo={this.findTodo}
@@ -257,8 +277,9 @@ class RootLayout extends Component<{}, State> {
                 handleSeeAll={this.handleSeeAll}
                 sortActivate={this.sortActivate}
                 sortDeactivate={this.sortDeactivate}
-              ></ToDoListButton>
-
+                seeAllCurrent={this.seeAllCurrent}
+                toggleAddFormVisible={this.toggleAddFormVisible}
+              />
               <ToDoListTable
                 todos={this.state.todolistwithkw}
                 todolistwithkw={this.state.todolistwithkw}
@@ -267,7 +288,8 @@ class RootLayout extends Component<{}, State> {
                 changeTodoTitle={this.changeTodoTitle}
                 // findTodoInPage={this.findTodoInPage}
                 handleInputChange={this.handleInputChange}
-              ></ToDoListTable>
+                toggleAddFormVisible={this.toggleAddFormVisible}
+              />
             </div>
           </div>
           <Pagination

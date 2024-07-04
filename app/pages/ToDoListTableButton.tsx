@@ -9,6 +9,8 @@ interface ToDoListTableButtonProps {
   handleSeeAll: () => void;
   sortActivate: () => void;
   sortDeactivate: () => void;
+  toggleAddFormVisible: () => void;
+  seeAllCurrent: () => void;
 }
 
 interface State {
@@ -42,11 +44,21 @@ class ToDoListButton extends Component<ToDoListTableButtonProps, State> {
   handleSortDeactivate = () => {
     this.props.sortDeactivate();
   };
+  toggleAddFormVisible = () => {
+    this.props.toggleAddFormVisible();
+  };
+  seeAllCurrent = () => {
+    this.props.seeAllCurrent();
+  };
 
   render() {
     return (
       <div>
-        <button type="button" className="btn btn-primary mb-2">
+        <button
+          type="button"
+          className="btn btn-primary mb-2"
+          onClick={this.toggleAddFormVisible}
+        >
           <span className="fa fa-plus mr-5" />
           Thêm Công Việc
         </button>
@@ -119,6 +131,14 @@ class ToDoListButton extends Component<ToDoListTableButtonProps, State> {
                     onClick={this.handleSortDeactivate}
                   >
                     Trạng Thái Ẩn
+                  </button>
+                </li>
+                <li>
+                  <button
+                    className="dropdown-item"
+                    onClick={this.seeAllCurrent}
+                  >
+                    Xem todo trong trang
                   </button>
                 </li>
               </ul>

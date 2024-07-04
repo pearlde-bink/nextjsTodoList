@@ -5,8 +5,13 @@ interface AddWorkFormProps {
   addTodo: (title: string, status: string) => void;
 }
 
-class AddWorkForm extends Component<AddWorkFormProps> {
-  state = {
+interface State {
+  title: string;
+  status: string;
+}
+
+class AddWorkForm extends Component<AddWorkFormProps, State> {
+  state: State = {
     title: "",
     status: "Kích Hoạt",
   };
@@ -19,13 +24,26 @@ class AddWorkForm extends Component<AddWorkFormProps> {
     this.setState({ title: e.target.value });
   };
 
+  // handleChange = (
+  //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  // ) => {
+  //   this.setState({ [e.target.name]: e.target.value } as Pick<
+  //     State,
+  //     keyof State
+  //   >);
+  // };
+
   handleSubmit = (e: any) => {
     e.preventDefault();
-    const todo = {
-      title: this.state.title,
-      status: this.state.status,
-    };
+    const { title, status } = this.state;
 
+    const todo = {
+      title: title,
+      status: status,
+    };
+    // const todo = this.props.addTodo(this.state.title, this.state.status);
+    this.props.addTodo(title, status);
+    //update in db
     fetch("http://localhost:8000/todo", {
       method: "POST",
       headers: {
@@ -33,7 +51,8 @@ class AddWorkForm extends Component<AddWorkFormProps> {
       },
       body: JSON.stringify(todo),
     });
-    this.setState({ title: "", status: "Kích Hoạt" }); //setState also re-render component
+
+    this.setState({ title: "", status: "Kích Hoạt" }); //reset add-form
   };
 
   render() {

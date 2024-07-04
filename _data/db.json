@@ -1,11 +1,6 @@
 {
   "todo": [
     {
-      "id": "0",
-      "title": "Học lập trình",
-      "status": "Kích Hoạt"
-    },
-    {
       "id": "1",
       "title": "Đọc sách",
       "status": "Ẩn"
@@ -83,7 +78,7 @@
     {
       "id": "18",
       "title": "Chơi thể thao",
-      "status": "Ẩn"
+      "status": "Kích Hoạt"
     },
     {
       "id": "19",
@@ -193,7 +188,7 @@
     {
       "id": "40",
       "title": "Đi học",
-      "status": "Kích Hoạt"
+      "status": "Ẩn"
     },
     {
       "id": "41",
@@ -208,17 +203,17 @@
     {
       "id": "43",
       "title": "Chơi cờ vua",
-      "status": "Ẩn"
-    },
-    {
-      "id": "44",
-      "title": "Làm việc nhóm",
       "status": "Kích Hoạt"
     },
     {
-      "id": "45",
-      "title": "Thư giãn",
+      "id": "aa85",
+      "title": "Học thái công",
       "status": "Ẩn"
+    },
+    {
+      "id": "4b5f",
+      "title": "con meo",
+      "status": "Kích Hoạt"
     }
   ]
 }

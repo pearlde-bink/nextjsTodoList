@@ -11,11 +11,11 @@ interface Todo {
 interface ToDoListTableProps {
   todos: Todo[];
   todolistwithkw: Todo[];
-  removeTodo: (id: number) => void;
+  removeTodo: (id: string) => void;
   toggleToDoStatus: (id: number) => void;
   changeTodoTitle: (id: number, title: string) => void;
-  // findTodoInPage: (keyword: string) => void;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  toggleAddFormVisible: () => void;
 }
 
 class ToDoListTable extends Component<ToDoListTableProps> {
@@ -56,7 +56,7 @@ class ToDoListTable extends Component<ToDoListTableProps> {
                 </td>
                 <td />
               </tr>
-              {this.props.todos.map((todo, index) => (
+              {this.props.todos.map((todo) => (
                 <tr key={todo.id}>
                   <td>{todo.id}</td>
                   <td>
@@ -79,42 +79,21 @@ class ToDoListTable extends Component<ToDoListTableProps> {
                       id="toastbtn"
                       type="button"
                       className="btn btn-warning"
-                      onClick={() =>
-                        this.props.changeTodoTitle(todo.id, todo.title)
-                      }
+                      onClick={() => {
+                        this.props.changeTodoTitle(todo.id, todo.title);
+                        this.props.toggleAddFormVisible();
+                      }}
                     >
                       <span className="fa fa-pencil mr-5" />
                       Sửa
                     </button>
-                    {/* <div className="toast bg-success">
-                      <div className="toast-header">
-                        <strong className="me-auto">Success</strong>
-                        <button
-                          type="button"
-                          className="btn-close"
-                          data-bs-dismiss="toast"
-                        />
-                      </div>
-                      <div className="toast-body">
-                        <p>Successfully change to-do</p>
-                      </div>
-                    </div>
-                    <Script id="toast" type="module">
-                      {`
-                        document.getElementById("toastbtn").onclick = function() {
-                          var toastElList = [].slice.call(document.querySelectorAll('.toast'))
-                          var toastList = toastElList.map(function(toastEl) {
-                            return new bootstrap.Toast(toastEl)
-                          })
-                          toastList.forEach(toast => toast.show())
-                        }
-                      `}
-                    </Script> */}
                     &nbsp;
                     <button
                       type="button"
                       className="btn btn-danger"
-                      onClick={() => this.props.removeTodo(todo.id)}
+                      onClick={() =>
+                        this.props.removeTodo(todo.id as unknown as string)
+                      }
                     >
                       <span className="fa fa-trash mr-5" />
                       Xóa
