@@ -17,7 +17,7 @@ const inter = Inter({ subsets: ["latin"] });
 // };
 
 interface Todos {
-  id: number;
+  id: string;
   title: string;
   status: string;
 }
@@ -32,6 +32,9 @@ interface State {
   indexOfFirstTodo: number;
   currentTodos: Todos[];
   isAddFormVisible: boolean;
+  isChangeTodo: boolean;
+
+  todoToEdit: Todos;
 }
 
 class RootLayout extends Component<{}, State> {
@@ -45,6 +48,17 @@ class RootLayout extends Component<{}, State> {
     indexOfFirstTodo: 0,
     currentTodos: [],
     isAddFormVisible: false,
+    isChangeTodo: false,
+
+    todoToEdit: { id: "", title: "", status: "" },
+  };
+
+  reState = (tdl: Todos) => {
+    const newtodolist = [...this.state.todos, tdl];
+    this.setState(
+      { todos: newtodolist, todolistwithkw: newtodolist },
+      this.updateCurrentTodos
+    );
   };
 
   setCurrentPage = (pageNum: number) => {
@@ -66,7 +80,62 @@ class RootLayout extends Component<{}, State> {
     }
   };
 
-  toggleToDoStatus = async (id: number) => {
+  toggleAddFormVisible = () => {
+    this.setState((prevState) => ({
+      isAddFormVisible: !prevState.isAddFormVisible,
+    }));
+    this.setState({
+      isChangeTodo: false,
+    });
+  };
+
+  toggleChangeTodo = (todo: Todos) => {
+    this.setState((prevState) => ({
+      isChangeTodo: !prevState.isChangeTodo,
+    }));
+    this.setState({
+      todoToEdit: todo,
+      isAddFormVisible: false,
+      isChangeTodo: true,
+    });
+  };
+
+  changeTodo = (id: string, title: string, status: string) => {
+    const todoToUpdate = this.state.todos.find((todo) => todo.id === id);
+    if (!todoToUpdate) return;
+
+    const updatedTodo = { ...todoToUpdate, id, title, status }; //change-todo with new values
+    let newtodos;
+    try {
+      //update that todo in db
+      fetch(`http://localhost:8000/todo/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedTodo),
+      });
+      //new array with updated todo
+      newtodos = this.state.todos.map((todo) =>
+        todo.id === id ? updatedTodo : todo
+      );
+      // update in state
+      this.setState(
+        {
+          todos: newtodos,
+          todolistwithkw: newtodos.filter((todo) =>
+            todo.title.toLowerCase().includes(this.state.keyword.toLowerCase())
+          ),
+        },
+        this.updateCurrentTodos
+      );
+      console.log("Changed todo: ", updatedTodo);
+    } catch (error) {
+      console.error("Failed to change todo:", error);
+    }
+  };
+
+  toggleToDoStatus = async (id: string) => {
     const clickTodo = this.state.todos.find((todo) => todo.id === id);
     if (!clickTodo) return "not found";
     const newStatus = clickTodo.status === "Kích Hoạt" ? "Ẩn" : "Kích Hoạt";
@@ -118,70 +187,6 @@ class RootLayout extends Component<{}, State> {
       console.log("Deleted todo");
     } catch (error) {
       console.error("Failed to delete todo:", error);
-    }
-  };
-
-  addTodo = (title: string, status: string) => {
-    try {
-      const newTodo: Todos = {
-        id: this.state.todos.length + 1,
-        title,
-        status,
-      };
-
-      const newtodos = [...this.state.todos, newTodo];
-      this.setState(
-        {
-          todos: newtodos,
-          todolistwithkw: newtodos,
-          isAddFormVisible: false,
-        },
-        this.updateCurrentTodos
-      );
-      // return newTodo;
-    } catch (error) {
-      console.error("Failed to add todo:", error);
-    }
-  };
-
-  toggleAddFormVisible = () => {
-    console.log("toggle");
-    this.setState((prevState) => ({
-      isAddFormVisible: !prevState.isAddFormVisible,
-    }));
-  };
-
-  changeTodoTitle = async (id: number, title: string) => {
-    const todoToUpdate = this.state.todos.find((todo) => todo.id === id);
-    if (!todoToUpdate) return;
-
-    const updatedTodo = { ...todoToUpdate, title };
-
-    try {
-      await fetch(`http://localhost:8000/todo/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedTodo),
-      });
-
-      const newtodos = this.state.todos.map((todo) =>
-        todo.id === id ? updatedTodo : todo
-      );
-
-      this.setState(
-        {
-          todos: newtodos,
-          todolistwithkw: newtodos.filter((todo) =>
-            todo.title.toLowerCase().includes(this.state.keyword.toLowerCase())
-          ),
-        },
-        this.updateCurrentTodos
-      );
-      console.log("Changed todo title");
-    } catch (error) {
-      console.error("Failed to change todo title:", error);
     }
   };
 
@@ -265,9 +270,17 @@ class RootLayout extends Component<{}, State> {
         <body className={inter.className}>
           <Header />
           <div className="row">
-            {/* <AddWorkForm addTodo={this.addTodo} /> */}
-            {this.state.isAddFormVisible && (
-              <AddWorkForm addTodo={this.addTodo} />
+            {(this.state.isAddFormVisible || this.state.isChangeTodo) && (
+              <AddWorkForm
+                updateCurrentTodos={this.updateCurrentTodos}
+                isAddFormVisible={this.state.isAddFormVisible}
+                isChangeTodo={this.state.isChangeTodo}
+                todoToEdit={this.state.todoToEdit}
+                reState={this.reState}
+                changeTodo={this.changeTodo}
+                toggleAddFormVisible={this.toggleAddFormVisible}
+                toggleChangeTodo={this.toggleChangeTodo}
+              />
             )}
             <div className="col-xs-8 col-sm-8 col-md-8 col-lg-8">
               <ToDoListButton
@@ -285,10 +298,10 @@ class RootLayout extends Component<{}, State> {
                 todolistwithkw={this.state.todolistwithkw}
                 removeTodo={this.removeTodo}
                 toggleToDoStatus={this.toggleToDoStatus}
-                changeTodoTitle={this.changeTodoTitle}
-                // findTodoInPage={this.findTodoInPage}
-                handleInputChange={this.handleInputChange}
                 toggleAddFormVisible={this.toggleAddFormVisible}
+                handleInputChange={this.handleInputChange}
+                toggleChangeTodo={this.toggleChangeTodo}
+                reState={this.reState}
               />
             </div>
           </div>

@@ -1,19 +1,94 @@
 "use client";
 import React, { Component } from "react";
+import { v4 as uuidv4 } from "uuid";
 
-interface AddWorkFormProps {
-  addTodo: (title: string, status: string) => void;
-}
-
-interface State {
+interface Todos {
+  id: string;
   title: string;
   status: string;
 }
 
+interface AddWorkFormProps {
+  isAddFormVisible: boolean;
+  isChangeTodo: boolean;
+  updateCurrentTodos: () => void;
+  reState: (tdl: Todos) => void;
+  todoToEdit: Todos;
+  changeTodo: (id: string, title: string, status: string) => void;
+  toggleAddFormVisible: () => void;
+  toggleChangeTodo: (Todo: Todos) => void;
+}
+
+interface State {
+  id: string;
+  title: string;
+  status: string;
+  todos: Todos[];
+  todolistwithkw: Todos[];
+  keyword: string;
+  isAddFormVisible: boolean;
+  isChangeTodo: boolean;
+}
+
 class AddWorkForm extends Component<AddWorkFormProps, State> {
   state: State = {
+    id: "",
     title: "",
     status: "Kích Hoạt",
+    todos: [],
+    todolistwithkw: [],
+    keyword: "",
+    isAddFormVisible: false,
+    isChangeTodo: false,
+  };
+
+  updateCurrentTodos = () => {
+    this.props.updateCurrentTodos();
+  };
+
+  componentDidUpdate(prevProps: any) {
+    if (
+      this.props.todoToEdit &&
+      prevProps.todoToEdit !== this.props.todoToEdit
+    ) {
+      this.setState({
+        id: this.props.todoToEdit.id,
+        title: this.props.todoToEdit.title,
+        status: this.props.todoToEdit.status,
+      });
+    }
+    console.log("this todo: ", this.props.todoToEdit);
+  }
+
+  addTodo = (title: string, status: string) => {
+    try {
+      const newTodo: Todos = {
+        id: uuidv4(),
+        title,
+        status,
+      };
+      console.log("newTodo: ", newTodo);
+
+      const newtodos = [...this.state.todos, newTodo];
+      console.log("newtodos: ", newtodos[newtodos.length - 1]);
+
+      //update in db
+      fetch("http://localhost:8000/todo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newTodo),
+      });
+      //update in state (table)
+      this.props.reState(newTodo);
+    } catch (error) {
+      console.error("Failed to add todo:", error);
+    }
+  };
+
+  changeTodo = (id: string, title: string, status: string) => {
+    this.props.changeTodo(id, title, status);
   };
 
   handleSelectChange = (e: any) => {
@@ -21,37 +96,23 @@ class AddWorkForm extends Component<AddWorkFormProps, State> {
   };
 
   handleChange = (e: any) => {
-    this.setState({ title: e.target.value });
+    this.setState({ title: e.target.value, status: e.target.value });
   };
-
-  // handleChange = (
-  //   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  // ) => {
-  //   this.setState({ [e.target.name]: e.target.value } as Pick<
-  //     State,
-  //     keyof State
-  //   >);
-  // };
 
   handleSubmit = (e: any) => {
     e.preventDefault();
-    const { title, status } = this.state;
+    const { id, title, status } = this.state;
+    const todo = { id, title, status };
+    console.log("todo:  ", todo);
 
-    const todo = {
-      title: title,
-      status: status,
-    };
-    // const todo = this.props.addTodo(this.state.title, this.state.status);
-    this.props.addTodo(title, status);
-    //update in db
-    fetch("http://localhost:8000/todo", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(todo),
-    });
-
+    if (this.props.isAddFormVisible) {
+      this.addTodo(todo.title, todo.status);
+      console.log("addtodo: ", todo);
+    } else if (this.props.isChangeTodo) {
+      this.changeTodo(todo.id, todo.title, todo.status);
+      console.log("change a todo : ", todo);
+    }
+    this.props.toggleAddFormVisible();
     this.setState({ title: "", status: "Kích Hoạt" }); //reset add-form
   };
 
@@ -80,6 +141,7 @@ class AddWorkForm extends Component<AddWorkFormProps, State> {
                 value={this.state.status}
                 required
               >
+                <option value={"Chưa chọn"}>Chọn trạng thái</option>
                 <option value={"Kích hoạt"}>Kích Hoạt</option>
                 <option value={"Ẩn"}>Ẩn</option>
               </select>

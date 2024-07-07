@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import Script from "next/script";
 
 interface Todo {
-  id: number;
+  id: string;
   title: string;
   status: string;
 }
@@ -12,18 +12,14 @@ interface ToDoListTableProps {
   todos: Todo[];
   todolistwithkw: Todo[];
   removeTodo: (id: string) => void;
-  toggleToDoStatus: (id: number) => void;
-  changeTodoTitle: (id: number, title: string) => void;
+  toggleToDoStatus: (id: string) => void;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   toggleAddFormVisible: () => void;
+  toggleChangeTodo: (Todo: Todo) => void;
+  reState: (todo: Todo) => void;
 }
 
 class ToDoListTable extends Component<ToDoListTableProps> {
-  handleChangeTitle = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    const newsTitle = e.target.value;
-    this.props.changeTodoTitle(id, newsTitle);
-  };
-
   render() {
     return (
       <div className="row mt-15">
@@ -80,8 +76,7 @@ class ToDoListTable extends Component<ToDoListTableProps> {
                       type="button"
                       className="btn btn-warning"
                       onClick={() => {
-                        this.props.changeTodoTitle(todo.id, todo.title);
-                        this.props.toggleAddFormVisible();
+                        this.props.toggleChangeTodo(todo);
                       }}
                     >
                       <span className="fa fa-pencil mr-5" />
