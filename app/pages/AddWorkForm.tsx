@@ -14,7 +14,7 @@ interface AddWorkFormProps {
   updateCurrentTodos: () => void;
   reState: (tdl: Todos) => void;
   todoToEdit: Todos;
-  changeTodo: (id: string, title: string, status: string) => void;
+  // changeTodo: (id: string, title: string, status: string) => void;
   toggleAddFormVisible: () => void;
   toggleChangeTodo: (Todo: Todos) => void;
 }
@@ -57,61 +57,67 @@ class AddWorkForm extends Component<AddWorkFormProps, State> {
         status: this.props.todoToEdit.status,
       });
     }
-    console.log("this todo: ", this.props.todoToEdit);
   }
 
-  addTodo = (title: string, status: string) => {
-    try {
-      const newTodo: Todos = {
-        id: uuidv4(),
-        title,
-        status,
-      };
-      console.log("newTodo: ", newTodo);
+  // addTodo = (title: string, status: string) => {
+  //   try {
+  //     const newTodo: Todos = {
+  //       id: uuidv4(),
+  //       title,
+  //       status,
+  //     };
+  //     console.log("newTodo: ", newTodo);
 
-      const newtodos = [...this.state.todos, newTodo];
-      console.log("newtodos: ", newtodos[newtodos.length - 1]);
+  //     const newtodos = [...this.state.todos, newTodo];
+  //     console.log("newtodos: ", newtodos[newtodos.length - 1]);
 
-      //update in db
-      fetch("http://localhost:8000/todo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newTodo),
-      });
-      //update in state (table)
-      this.props.reState(newTodo);
-    } catch (error) {
-      console.error("Failed to add todo:", error);
-    }
-  };
-
-  changeTodo = (id: string, title: string, status: string) => {
-    this.props.changeTodo(id, title, status);
-  };
+  //     //update in db
+  //     fetch("http://localhost:8000/todo", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(newTodo),
+  //     });
+  //     //update in state (table)
+  //     this.props.reState(newTodo);
+  //   } catch (error) {
+  //     console.error("Failed to add todo:", error);
+  //   }
+  // };
 
   handleSelectChange = (e: any) => {
     this.setState({ status: e.target.value });
   };
 
   handleChange = (e: any) => {
-    this.setState({ title: e.target.value, status: e.target.value });
+    this.setState({ title: e.target.value });
   };
 
-  handleSubmit = (e: any) => {
+  handleSubmit = async (e: any) => {
     e.preventDefault();
     const { id, title, status } = this.state;
-    const todo = { id, title, status };
+    let todo = { id, title, status };
     console.log("todo:  ", todo);
 
-    if (this.props.isAddFormVisible) {
-      this.addTodo(todo.title, todo.status);
-      console.log("addtodo: ", todo);
-    } else if (this.props.isChangeTodo) {
-      this.changeTodo(todo.id, todo.title, todo.status);
-      console.log("change a todo : ", todo);
-    }
+    const method = id ? "PUT" : "POST";
+    const IdToSubmit = id ? id : uuidv4();
+    todo = { ...todo, id: IdToSubmit };
+
+    fetch(`http://localhost:8000/todo/${id ? id : ""}`, {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...todo,
+        id: IdToSubmit,
+        title: title,
+        status: status,
+      }),
+    });
+
+    this.props.reState(todo);
     this.props.toggleAddFormVisible();
     this.setState({ title: "", status: "Kích Hoạt" }); //reset add-form
   };
@@ -141,7 +147,6 @@ class AddWorkForm extends Component<AddWorkFormProps, State> {
                 value={this.state.status}
                 required
               >
-                <option value={"Chưa chọn"}>Chọn trạng thái</option>
                 <option value={"Kích hoạt"}>Kích Hoạt</option>
                 <option value={"Ẩn"}>Ẩn</option>
               </select>

@@ -11,15 +11,51 @@ interface Todo {
 interface ToDoListTableProps {
   todos: Todo[];
   todolistwithkw: Todo[];
-  removeTodo: (id: string) => void;
-  toggleToDoStatus: (id: string) => void;
+  // removeTodo: (id: string) => void;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   toggleAddFormVisible: () => void;
   toggleChangeTodo: (Todo: Todo) => void;
-  reState: (todo: Todo) => void;
+  reState: (todo: any) => void;
+  updateCurrentTodos: () => void;
 }
 
 class ToDoListTable extends Component<ToDoListTableProps> {
+  updateList = (td: Todo[]) => {
+    this.setState(
+      {
+        todos: td,
+        todolistwithkw: td,
+      },
+      this.props.updateCurrentTodos
+    );
+  };
+
+  removeTodo = async (id: string) => {
+    console.log(this.props.todos);
+    try {
+      await fetch(`http://localhost:8000/todo/${id}`, {
+        method: "DELETE",
+      });
+
+      const newtodos = this.props.todos.filter((todo) => todo.id !== id);
+      console.log("Todos after deletion:", newtodos);
+
+      this.setState(
+        {
+          todos: newtodos,
+          todolistwithkw: newtodos,
+        },
+        () => {
+          this.props.updateCurrentTodos;
+          this.updateList(newtodos);
+          console.log("oke remove");
+        }
+      );
+    } catch (error) {
+      console.error("Failed to delete todo:", error);
+    }
+  };
+
   render() {
     return (
       <div className="row mt-15">
@@ -65,7 +101,6 @@ class ToDoListTable extends Component<ToDoListTableProps> {
                         textDecoration:
                           todo.status === "Ẩn" ? "line-through" : "none",
                       }}
-                      onClick={() => this.props.toggleToDoStatus(todo.id)}
                     >
                       {todo.status}
                     </span>
@@ -86,9 +121,7 @@ class ToDoListTable extends Component<ToDoListTableProps> {
                     <button
                       type="button"
                       className="btn btn-danger"
-                      onClick={() =>
-                        this.props.removeTodo(todo.id as unknown as string)
-                      }
+                      onClick={() => this.removeTodo(todo.id)}
                     >
                       <span className="fa fa-trash mr-5" />
                       Xóa
