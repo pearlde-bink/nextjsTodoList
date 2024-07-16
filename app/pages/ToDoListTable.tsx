@@ -6,6 +6,7 @@ interface Todo {
   id: string;
   title: string;
   status: string;
+  date: string;
 }
 
 interface ToDoListTableProps {
@@ -66,6 +67,7 @@ class ToDoListTable extends Component<ToDoListTableProps> {
                 <th className="text-center">STT</th>
                 <th className="text-center">Tên</th>
                 <th className="text-center">Trạng Thái</th>
+                <th className="text-center">Giờ tạo</th>
                 <th className="text-center">Hành Động</th>
               </tr>
             </thead>
@@ -104,6 +106,9 @@ class ToDoListTable extends Component<ToDoListTableProps> {
                     >
                       {todo.status}
                     </span>
+                  </td>
+                  <td>
+                    <p>{todo.date}</p>
                   </td>
                   <td className="text-center">
                     <button

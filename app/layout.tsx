@@ -15,6 +15,7 @@ interface Todos {
   id: string;
   title: string;
   status: string;
+  date: string;
 }
 
 interface State {
@@ -28,7 +29,6 @@ interface State {
   currentTodos: Todos[];
   isAddFormVisible: boolean;
   isChangeTodo: boolean;
-
   todoToEdit: Todos;
 }
 
@@ -44,8 +44,7 @@ class RootLayout extends Component<{}, State> {
     currentTodos: [],
     isAddFormVisible: false,
     isChangeTodo: false,
-
-    todoToEdit: { id: "", title: "", status: "" },
+    todoToEdit: { id: "", title: "", status: "", date: "" },
   };
 
   reState = (tdl: Todos) => {
@@ -57,6 +56,8 @@ class RootLayout extends Component<{}, State> {
     if (!this.state.todos.find((todo) => todo.id === tdl.id)) {
       newtodolist.push(tdl);
     }
+
+    newtodolist.sort((b: Todos, a: Todos) => a.date.localeCompare(b.date));
 
     this.setState(
       { todos: newtodolist, todolistwithkw: newtodolist },
@@ -77,6 +78,8 @@ class RootLayout extends Component<{}, State> {
     try {
       const res = await fetch("http://localhost:8000/todo");
       const todos = await res.json();
+
+      todos.sort((b: Todos, a: Todos) => a.date.localeCompare(b.date));
       this.setState({ todos }, this.updateCurrentTodos);
     } catch (error) {
       console.error("Failed to fetch todos:", error);

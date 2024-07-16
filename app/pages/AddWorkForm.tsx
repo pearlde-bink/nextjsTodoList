@@ -6,6 +6,7 @@ interface Todos {
   id: string;
   title: string;
   status: string;
+  date: string;
 }
 
 interface AddWorkFormProps {
@@ -59,33 +60,6 @@ class AddWorkForm extends Component<AddWorkFormProps, State> {
     }
   }
 
-  // addTodo = (title: string, status: string) => {
-  //   try {
-  //     const newTodo: Todos = {
-  //       id: uuidv4(),
-  //       title,
-  //       status,
-  //     };
-  //     console.log("newTodo: ", newTodo);
-
-  //     const newtodos = [...this.state.todos, newTodo];
-  //     console.log("newtodos: ", newtodos[newtodos.length - 1]);
-
-  //     //update in db
-  //     fetch("http://localhost:8000/todo", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(newTodo),
-  //     });
-  //     //update in state (table)
-  //     this.props.reState(newTodo);
-  //   } catch (error) {
-  //     console.error("Failed to add todo:", error);
-  //   }
-  // };
-
   handleSelectChange = (e: any) => {
     this.setState({ status: e.target.value });
   };
@@ -97,7 +71,8 @@ class AddWorkForm extends Component<AddWorkFormProps, State> {
   handleSubmit = async (e: any) => {
     e.preventDefault();
     const { id, title, status } = this.state;
-    let todo = { id, title, status };
+    const date = new Date().toJSON().split(".")[0] + "Z";
+    let todo = { id, title, status, date };
     console.log("todo:  ", todo);
 
     const method = id ? "PUT" : "POST";
@@ -114,6 +89,7 @@ class AddWorkForm extends Component<AddWorkFormProps, State> {
         id: IdToSubmit,
         title: title,
         status: status,
+        date: date,
       }),
     });
 
